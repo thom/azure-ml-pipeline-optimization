@@ -3,10 +3,14 @@
 - [Overview](#overview)
 - [Summary](#summary)
 - [Scikit-learn Pipeline](#scikit-learn-pipeline)
+  - [Data collection, cleansing and splitting](#data-collection-cleansing-and-splitting)
+  - [Hyperparameter sampling](#hyperparameter-sampling)
+  - [Model training and testing](#model-training-and-testing)
+  - [Applying early stopping policy](#applying-early-stopping-policy)
+  - [Saving model](#saving-model)
 - [AutoML](#automl)
 - [Pipeline comparison](#pipeline-comparison)
 - [Future work](#future-work)
-- [Proof of cluster clean up](#proof-of-cluster-clean-up)
 - [References](#references)
 - [Requirements](#requirements)
 - [License](#license)
@@ -15,36 +19,93 @@
 
 This project is part of the Udacity Azure ML Nanodegree. It builds and optimizes an Azure ML pipeline using the Python SDK and a provided scikit-learn model. The model is then compared to an Azure AutoML run.
 
-The diagram below shows the main steps of creating and optimizing an ML pipeline:
+## Summary
+
+The [dataset](https://automlsamplenotebookdata.blob.core.windows.net/automl-sample-notebook-data/bankmarketing_train.csv) contains direct marketing campaign data of a banking institute. The data contains 20 features such as age, job, marital status, etc. The target column contains the categories "yes" and "no", to determine if the client subscribed to the bank's term deposit.
+
+In this project I did the following:
+
+- Tuned the hyperparameters of the [LogisticRegression](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html) model using [Hyperdrive](https://docs.microsoft.com/en-us/python/api/azureml-train-core/azureml.train.hyperdrive?view=azure-ml-py) achieving an accuracy of 90.97% for a `C` value of 17.57 and `max_iter` value of 100
+- Employed AutoML to find the best algorithm and got accuracy of 91.70% with [VotingEnsemble](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.VotingClassifier.html)
+
+The diagram below shows the main steps of creating and optimizing the ML pipeline executed in this project:
 
 ![Creating and optimizing an ML pipeline](./images/creating-and-optimizing-an-ml-pipeline.png)
 
-## Summary
-**In 1-2 sentences, explain the problem statement: e.g "This dataset contains data about... we seek to predict..."**
-
-**In 1-2 sentences, explain the solution: e.g. "The best performing model was a ..."**
-
-## Scikit-learn Pipeline
-**Explain the pipeline architecture, including data, hyperparameter tuning, and classification algorithm.**
-
-**What are the benefits of the parameter sampler you chose?**
-
-**What are the benefits of the early stopping policy you chose?**
+The following pictures provides an overview on how experiments are run in Azure:
 
 ![Run an experiment as a pipeline](./images/run-an-experiment-as-a-pipeline.png)
 
+## Scikit-learn Pipeline
+
+The pipeline uses a scikit-learn [LogisticRegression](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html) model together with HyperDrive for hyperparameter tuning:
+
+- [Data collection, cleansing and splitting](#data-collection-cleansing-and-splitting)
+- [Hyperparameter sampling](#hyperparameter-sampling)
+- [Model training and testing](#model-training-and-testing)
+- [Applying early stopping policy](#applying-early-stopping-policy)
+- [Saving model](#saving-model)
+
+The script `train.py` takes care of data collection, cleansing and splitting, model training and testing. Hyperparameter sampling and applying the early stopping policy is performed by HyperDrive.
+
+### Data collection, cleansing and splitting
+
+The dataset is loaded using `TabularDatasetFactory`. The cleansing process drops rows with empty values and performs one hot encoding for categorical columns. The dataset is split into train and test sets. 70% of the data is used for training and 30% for testing.
+
+### Hyperparameter sampling
+
+The project uses two hyperparameters:
+
+- `--C`: inverse regularization strength
+- `--max_iter`: maximum iteration to converge for the scikit-learn Logistic Regression model
+
+I use [random parameter sampling](https://docs.microsoft.com/en-us/python/api/azureml-train-core/azureml.train.hyperdrive.randomparametersampling?view=azure-ml-py). Random sampling supports discrete and continuous hyperparameters. It supports early termination of low-performance runs. In random sampling, hyperparameter values are randomly selected from the defined search space. Random parameter sampling is good approach for discovery learning as well as hyperparameter combinations.
+
+### Model training and testing
+
+Model training and testing is performed using scikit-learn's Logistical Regression model. In `train.py`, metrics are generated and logged. The accuracy is used to benchmark the model.
+
+### Applying early stopping policy
+
+The execution of the pipeline is stopped if the conditions specified by the policy are met.
+
+The model uses [BanditPolicy](https://docs.microsoft.com/en-us/python/api/azureml-train-core/azureml.train.hyperdrive.banditpolicy?view=azure-ml-py).
+
+Bandit policy is based on slack factor/slack amount and evaluation interval. Bandit ends runs when the primary metric isn't within the specified slack factor/slack amount of the most successful run.
+
+### Saving model
+
+The best model is saved with `joblib`.
+
 ## AutoML
-**In 1-2 sentences, describe the model and hyperparameters generated by AutoML.**
+
+AutoML tries different models and algorithms and tunes the process within a specified period of time. The steps taken to implement AutoML were as follows:
+
+- Import the dataset using `TabularDatasetFactory`
+- Split it into train and test sets
+- Run AutoML and save the best performing model
+
+The Voting Ensemble model performed the best and provided an accuracy of 91.70%.
+
+The top 4 features contributing to the classification performance are `emp.var.rate`, `duration`, `nr.employed`, `euribor3m`. The following dependence plot shows the relationship between the value of a feature to the corresponding importance of the feature across a cohort:
+
+![Aggregate feature importance](./images/aggregate-feature-importance.png)
 
 ## Pipeline comparison
-**Compare the two models and their performance. What are the differences in accuracy? In architecture? If there was a difference, why do you think there was one?**
+
+Besides achieving a better accuracy, AutoML has the following additional benefits compared to the manually trained model using hyperparameter turing:
+
+- Leads to a simpler architecture as less steps are required
+- Allows for easy testing of several different ML models automatically selecting the best performing
+- Supports automatic data cleansing and pre-processing
 
 ## Future work
-**What are some areas of improvement for future experiments? Why might these improvements help the model?**
 
-## Proof of cluster clean up
-**If you did not delete your compute cluster in the code, please complete this section. Otherwise, delete this section.**
-**Image of cluster marked for deletion**
+Some areas of improvement for future experiments:
+
+- The dataset is imbalanced and as future work it should be addressed to tackle the model bias
+- Feature engineering in addition to hyperparameter tuning should also lead to better model performance
+- Increasing AutoML experiment timeout would enable more model testing
 
 ## References
 
