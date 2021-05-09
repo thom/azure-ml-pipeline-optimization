@@ -83,7 +83,7 @@ AutoML tries different models and algorithms and tunes the process within a spec
 
 - Import the dataset using `TabularDatasetFactory`
 - Split it into train and test sets
-- Run AutoML and save the best performing model
+- Run AutoML and save the best performing model (see [AutoMLConfig Class](https://docs.microsoft.com/en-us/python/api/azureml-train-automl-client/azureml.train.automl.automlconfig.automlconfig?view=azure-ml-py) for the documentation of the AutoML configuration parameters)
 
 The Voting Ensemble model performed the best and provided an accuracy of 91.70%.
 
@@ -103,9 +103,9 @@ Besides achieving a better accuracy, AutoML has the following additional benefit
 
 Some areas of improvement for future experiments:
 
-- The dataset is imbalanced and as future work it should be addressed to tackle the model bias
-- Feature engineering in addition to hyperparameter tuning should also lead to better model performance
-- Increasing AutoML experiment timeout would enable more model testing
+- The dataset is imbalanced: Address bias before running the AutoML pipeline to reduce the bias (see [Detect and mitigate unfairness in models with Azure Machine Learning](https://docs.microsoft.com/en-us/learn/modules/detect-mitigate-unfairness-models-with-azure-machine-learning/))
+- Feature engineering in addition to hyperparameter tuning should also lead to better model performance (see [Feature engineering in machine learning](https://docs.microsoft.com/en-us/azure/machine-learning/team-data-science-process/create-features) and [Data featurization in automated machine learning](https://docs.microsoft.com/en-us/azure/machine-learning/how-to-configure-auto-features))
+- Increasing AutoML experiment timeout: Enables more model testing and evaluation to come up with better performance metrics
 
 ## References
 
