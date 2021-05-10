@@ -25,7 +25,7 @@ The [dataset](https://automlsamplenotebookdata.blob.core.windows.net/automl-samp
 
 In this project I did the following:
 
-- Tuned the hyperparameters of the [LogisticRegression](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html) model using [Hyperdrive](https://docs.microsoft.com/en-us/python/api/azureml-train-core/azureml.train.hyperdrive?view=azure-ml-py) achieving an accuracy of 90.97% for a `C` value of 17.57 and `max_iter` value of 100
+- Tuned the hyperparameters of the [LogisticRegression](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html) model using [Hyperdrive](https://docs.microsoft.com/en-us/python/api/azureml-train-core/azureml.train.hyperdrive?view=azure-ml-py) achieving an accuracy of 90.97% for a `C` value of 18.18 and `max_iter` value of 200
 - Employed AutoML to find the best algorithm and got accuracy of 91.70% with [VotingEnsemble](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.VotingClassifier.html)
 
 The diagram below shows the main steps of creating and optimizing the ML pipeline executed in this project:
@@ -40,13 +40,15 @@ The following pictures provides an overview on how experiments are run in Azure:
 
 The pipeline uses a scikit-learn [LogisticRegression](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html) model together with HyperDrive for hyperparameter tuning:
 
-- [Data collection, cleansing and splitting](#data-collection-cleansing-and-splitting)
-- [Hyperparameter sampling](#hyperparameter-sampling)
-- [Model training and testing](#model-training-and-testing)
-- [Applying early stopping policy](#applying-early-stopping-policy)
-- [Saving model](#saving-model)
+  - [Data collection, cleansing and splitting](#data-collection-cleansing-and-splitting)
+  - [Hyperparameter sampling](#hyperparameter-sampling)
+  - [Model training and testing](#model-training-and-testing)
+  - [Applying early stopping policy](#applying-early-stopping-policy)
+  - [Saving model](#saving-model)
 
 The script `train.py` takes care of data collection, cleansing and splitting, model training and testing. Hyperparameter sampling and applying the early stopping policy is performed by HyperDrive.
+
+Tuning the hyperparameters of the [LogisticRegression](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html) model using [Hyperdrive](https://docs.microsoft.com/en-us/python/api/azureml-train-core/azureml.train.hyperdrive?view=azure-ml-py) achieves an accuracy of 90.97% for a `C` value of 18.18 and `max_iter` value of 200.
 
 ### Data collection, cleansing and splitting
 
