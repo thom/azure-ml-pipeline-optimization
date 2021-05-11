@@ -21,7 +21,7 @@ This project is part of the Udacity Azure ML Nanodegree. It builds and optimizes
 
 ## Summary
 
-The [dataset](https://automlsamplenotebookdata.blob.core.windows.net/automl-sample-notebook-data/bankmarketing_train.csv) contains direct marketing campaign data of a banking institute. The data contains 20 features such as age, job, marital status, etc. The target column contains the categories "yes" and "no", to determine if the client subscribed to the bank's term deposit.
+The [dataset](https://automlsamplenotebookdata.blob.core.windows.net/automl-sample-notebook-data/bankmarketing_train.csv) contains [direct marketing campaign data of a banking institute](https://archive.ics.uci.edu/ml/datasets/Bank+Marketing). The data contains 20 features such as age, job, marital status, etc. The target column contains the categories "yes" and "no", to determine if the client subscribed to the bank's term deposit.
 
 In this project I did the following:
 
